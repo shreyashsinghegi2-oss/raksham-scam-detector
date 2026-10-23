@@ -6,6 +6,7 @@ inside word boundaries), then applies logistic regression. tests/test_lite_parit
 import json
 import math
 import re
+import unicodedata
 from pathlib import Path
 
 import numpy as np
@@ -113,6 +114,7 @@ class Lite:
         threshold = self.meta["thresholds"]["strict" if strict else "balanced"]
         results = []
         for text in texts:
+            text = unicodedata.normalize("NFKC", text)  # fancy-font letters (𝙮𝙤𝙪𝙧) become plain ones
             idx, val = self.det.vector(text)
             p = self.probability(idx, val)
             item = {"verdict": "scam" if p >= threshold else "genuine", "scam_probability": round(p, 3)}

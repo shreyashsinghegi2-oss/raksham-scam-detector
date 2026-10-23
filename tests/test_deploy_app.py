@@ -58,3 +58,14 @@ def test_page_is_self_contained_and_uses_the_api():
     page = (data.ROOT / "deploy" / "public" / "index.html").read_text(encoding="utf-8")
     assert "/api/predict" in page and "/api/health" in page
     assert 'src="http' not in page and 'href="http' not in page  # nothing is loaded from another site
+
+
+def test_fancy_unicode_letters_are_read_as_plain_text():
+    from fastapi.testclient import TestClient
+    import index
+
+    plain = "your credit card limit is being increased to rs 2 lakh please confirm the otp and cvv for activation"
+    fancy = "𝙮𝙤𝙪𝙧 𝙘𝙧𝙚𝙙𝙞𝙩 𝙘𝙖𝙧𝙙 𝙡𝙞𝙢𝙞𝙩 𝙞𝙨 𝙗𝙚𝙞𝙣𝙜 𝙞𝙣𝙘𝙧𝙚𝙖𝙨𝙚𝙙 𝙩𝙤 𝙧𝙨 2 𝙡𝙖𝙠𝙝 𝙥𝙡𝙚𝙖𝙨𝙚 𝙘𝙤𝙣𝙛𝙞𝙧𝙢 𝙩𝙝𝙚 𝙤𝙩𝙥 𝙖𝙣𝙙 𝙘𝙫𝙫 𝙛𝙤𝙧 𝙖𝙘𝙩𝙞𝙫𝙖𝙩𝙞𝙤𝙣"
+    r = TestClient(index.app).post("/api/predict", json={"messages": [plain, fancy]}).json()["results"]
+    assert r[0]["scam_probability"] == r[1]["scam_probability"]
+    assert r[1]["verdict"] == "scam"

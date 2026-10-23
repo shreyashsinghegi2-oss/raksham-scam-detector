@@ -2,6 +2,8 @@ import argparse
 import json
 import sys
 
+import unicodedata
+
 import joblib
 
 from .data import MODEL_PATH
@@ -18,6 +20,7 @@ def predict(texts: list[str], bundle: dict | None = None, strict: bool = False) 
     """Verdict, scam probability and, for scams, the likely scam type with its confidence and the words that drove the score.
     The strict threshold raises the bar for calling a message a scam, which cuts false alarms and misses more scams."""
     bundle = bundle or load_bundle()
+    texts = [unicodedata.normalize("NFKC", t) for t in texts]  # fancy-font letters become plain ones
     threshold = bundle["thresholds"]["strict" if strict else "balanced"]
     probs = bundle["detector"].predict_proba(texts)[:, 1]
     results = []
