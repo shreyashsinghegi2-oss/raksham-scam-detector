@@ -52,3 +52,9 @@ def test_api_key_when_set(client, monkeypatch):
 def test_the_function_needs_only_fastapi_and_numpy():
     sources = (data.ROOT / "deploy" / "api" / "index.py").read_text() + (data.ROOT / "deploy" / "api" / "_lite.py").read_text()
     assert "sklearn" not in sources and "pandas" not in sources and "joblib" not in sources
+
+
+def test_page_is_self_contained_and_uses_the_api():
+    page = (data.ROOT / "deploy" / "public" / "index.html").read_text(encoding="utf-8")
+    assert "/api/predict" in page and "/api/health" in page
+    assert 'src="http' not in page and 'href="http' not in page  # nothing is loaded from another site
