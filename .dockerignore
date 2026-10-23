@@ -1,0 +1,7 @@
+.venv
+models
+reports
+tests
+**/__pycache__
+*.egg-info
+.pytest_cache

@@ -1,0 +1,151 @@
+<title>Raksham Scam Check</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<style>
+  :root {
+    --bg:#f5f7f8; --card:#ffffff; --text:#13202a; --muted:#53616e; --line:#d7dfe5; --accent:#0f766e; --on-accent:#ffffff;
+    --scam:#9f1c14; --scam-bg:#fdeceb; --ok:#14532d; --ok-bg:#e6f4ea; --track:#e3e9ee; --tick:#53616e; --field:#f5f7f8;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg:#0e161d; --card:#16202a; --text:#e8eef3; --muted:#a6b4c0; --line:#2a3744; --accent:#2dd4bf; --on-accent:#04201d;
+      --scam:#ffb4ab; --scam-bg:#3b1b19; --ok:#8be9a8; --ok-bg:#12301f; --track:#263340; --tick:#a6b4c0; --field:#0e161d; color-scheme:dark;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg:#0e161d; --card:#16202a; --text:#e8eef3; --muted:#a6b4c0; --line:#2a3744; --accent:#2dd4bf; --on-accent:#04201d;
+    --scam:#ffb4ab; --scam-bg:#3b1b19; --ok:#8be9a8; --ok-bg:#12301f; --track:#263340; --tick:#a6b4c0; --field:#0e161d; color-scheme:dark;
+  }
+  * { box-sizing:border-box; }
+  body { margin:0; background:var(--bg); color:var(--text); font:16px/1.55 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif; }
+  main { max-width:720px; margin:0 auto; padding-block:32px 56px; padding-left:max(16px, env(safe-area-inset-left, 0px)); padding-right:max(16px, env(safe-area-inset-right, 0px)); }
+  h1 { font-size:28px; line-height:1.2; margin:0 0 6px; text-wrap:balance; }
+  h2 { font-size:18px; margin:0 0 8px; }
+  .lead { color:var(--muted); margin:0 0 24px; }
+  .card { background:var(--card); border:1px solid var(--line); border-radius:12px; padding:20px; min-width:0; }
+  label.field { display:block; font-weight:600; margin-bottom:8px; }
+  textarea { width:100%; min-height:128px; padding:12px; font:inherit; color:inherit; background:var(--field); border:1px solid var(--line); border-radius:8px; resize:vertical; }
+  textarea:focus-visible, button:focus-visible, input:focus-visible { outline:3px solid var(--accent); outline-offset:2px; }
+  .row { display:flex; flex-wrap:wrap; gap:12px 20px; align-items:center; margin-top:12px; }
+  button.go { font:inherit; font-weight:700; padding:10px 22px; border:0; border-radius:8px; background:var(--accent); color:var(--on-accent); cursor:pointer; }
+  .strict { display:flex; gap:8px; align-items:center; color:var(--muted); font-size:14px; }
+  .samples { margin-top:16px; }
+  .samples p { margin:0 0 8px; color:var(--muted); font-size:14px; }
+  .chips { display:flex; flex-wrap:wrap; gap:8px; }
+  .chip { font:inherit; font-size:14px; padding:6px 12px; border-radius:999px; border:1px solid var(--line); background:transparent; color:var(--text); cursor:pointer; }
+  .chip:hover { border-color:var(--accent); }
+  #result { margin-top:20px; }
+  .verdict { border-radius:10px; padding:14px 16px; font-weight:700; font-size:19px; }
+  .verdict.scam { background:var(--scam-bg); color:var(--scam); }
+  .verdict.genuine { background:var(--ok-bg); color:var(--ok); }
+  .meter { position:relative; height:10px; background:var(--track); border-radius:999px; margin:18px 0 6px; }
+  .meter .fill { position:absolute; inset:0 auto 0 0; border-radius:999px; background:var(--accent); }
+  .meter .tick { position:absolute; top:-4px; bottom:-4px; width:2px; background:var(--tick); }
+  .scale { position:relative; height:20px; font-size:12px; color:var(--muted); }
+  .scale span { position:absolute; transform:translateX(-50%); white-space:nowrap; }
+  dl { margin:14px 0 0; display:grid; grid-template-columns:max-content 1fr; gap:6px 16px; }
+  dt { color:var(--muted); } dd { margin:0; min-width:0; overflow-wrap:anywhere; }
+  .error { color:var(--scam); font-weight:600; }
+  .about { margin-top:24px; }
+  .about ul { margin:8px 0 0; padding-left:20px; color:var(--muted); font-size:14px; }
+  .about li { margin-bottom:6px; }
+  samp { font-family:ui-monospace,SFMono-Regular,Menlo,monospace; color:var(--text); }
+  @media (max-width:420px) { dl { grid-template-columns:1fr; gap:0; } dt { margin-top:8px; } }
+</style>
+
+<main>
+  <h1>Raksham Scam Check</h1>
+  <p class="lead">Paste an SMS, WhatsApp message or call transcript in English, Hindi or Hinglish. Everything runs in this page: your message is not sent anywhere.</p>
+
+  <section class="card" aria-label="Check a message">
+    <label class="field" for="msg">Message</label>
+    <textarea id="msg" maxlength="2000" placeholder="Your KYC has expired. Share the OTP now or your account will be blocked."></textarea>
+    <div class="row">
+      <button class="go" id="go" type="button">Check message</button>
+      <label class="strict"><input id="strict" type="checkbox"> Strict mode: fewer false alarms, more missed scams</label>
+    </div>
+    <div class="samples">
+      <p id="hint">Example loaded. Replace it with your message, or try another:</p>
+      <div class="chips" id="chips"></div>
+    </div>
+    <div id="result" aria-live="polite"></div>
+  </section>
+
+  <section class="card about" aria-label="About this model">
+    <h2>What this is</h2>
+    <ul id="about"></ul>
+  </section>
+</main>
+
+<script>/*SCORER*/</script>
+<script>
+const DATA = /*DATA*/;
+const scorer = RakshamScorer.createScorer(DATA);
+const $ = (id) => document.getElementById(id);
+const pct = (v) => Math.round(v * 100);
+
+const SAMPLES = [
+  ["Bank KYC scam", "Dear customer your SBI YONO account will be blocked today. Update PAN now at http://sbi-kyc-update.xyz or call 98xxxxxx34"],
+  ["Electricity scam (Hinglish)", "Sir aapka bijli connection aaj raat 9:30 baje kat jayega, bill update nahi hua. Turant is number par call karein: 98xxxxxx12"],
+  ["Fake job fee (Hindi)", "आपका चयन हो गया है। नौकरी पक्की करने के लिए Rs 1,500 पंजीकरण शुल्क अभी जमा करें।"],
+  ["Bank debit alert (genuine)", "Rs 2,000.00 debited from A/c XX1234 on 12-10-26 at AMAZON. Not you? Call 1930 or the bank number on your card."],
+  ["Salary credited (known weak spot)", "Your salary of Rs 62,000 has been credited to account XX4521 on 30-Sep."],
+];
+
+function el(tag, props, ...children) {
+  const node = Object.assign(document.createElement(tag), props || {});
+  node.append(...children);
+  return node;
+}
+
+function show(text) {
+  const out = $("result");
+  out.replaceChildren();
+  const strict = $("strict").checked;
+  const r = scorer.predict([text], strict)[0];
+  const m = scorer.meta.thresholds;
+  out.append(el("div", { className: "verdict " + r.verdict, textContent: r.verdict === "scam" ? "Looks like a scam" : "Looks genuine" }));
+
+  const meter = el("div", { className: "meter" });
+  meter.append(el("div", { className: "fill", style: "width:" + pct(r.scam_probability) + "%" }));
+  for (const t of [m.balanced, m.strict]) meter.append(el("div", { className: "tick", style: "left:" + pct(t) + "%" }));
+  const scale = el("div", { className: "scale" });
+  scale.append(el("span", { style: "left:" + pct(m.balanced) + "%", textContent: pct(m.balanced) + "%" }),
+               el("span", { style: "left:" + pct(m.strict) + "%", textContent: pct(m.strict) + "%" }));
+  out.append(meter, scale);
+
+  const dl = el("dl");
+  const add = (term, value) => dl.append(el("dt", { textContent: term }), el("dd", { textContent: value }));
+  add("Scam score", pct(r.scam_probability) + "%");
+  add("Flag lines", "balanced " + pct(m.balanced) + "%, strict " + pct(m.strict) + "% (the marks on the bar). Now using " + (strict ? "strict" : "balanced") + " mode.");
+  if (r.verdict === "scam") {
+    const guess = r.scam_type_guess.replaceAll("_", " ");
+    add("Likely type", r.scam_type === "uncertain" ? "Uncertain (best guess: " + guess + ")" : guess);
+    if (r.signals.length) add("Words that raised it", r.signals.join(", "));
+  }
+  out.append(dl);
+}
+
+function run() {
+  const text = $("msg").value.trim();
+  if (!text) { const out = $("result"); out.replaceChildren(el("p", { className: "error", textContent: "Paste a message first." })); return; }
+  show(text);
+}
+
+for (const [label, text] of SAMPLES) {
+  $("chips").append(el("button", { className: "chip", type: "button", textContent: label, onclick: () => { $("msg").value = text; $("hint").textContent = "Try another example:"; run(); } }));
+}
+$("go").addEventListener("click", () => { $("hint").textContent = "Try another example:"; run(); });
+$("strict").addEventListener("change", () => { if ($("msg").value.trim()) run(); });
+$("msg").addEventListener("keydown", (e) => { if (e.key === "Enter" && (e.ctrlKey || e.metaKey)) run(); });
+
+const ev = scorer.meta.evaluation;
+for (const line of [
+  "A model trained on 8,022 synthetic, template-written Indian scam and genuine messages. Its scores describe that data, not real-world accuracy.",
+  "On message templates it had not seen: about " + pct(ev.scam_templates_caught) + "% of scam templates caught and " + pct(ev.genuine_templates_left_alone) + "% of genuine templates left alone (ROC AUC " + ev.roc_auc + ").",
+  "It can wrongly flag genuine notices such as salary credits and premium receipts. The scam type is a weak hint (about " + pct(ev.scam_type_accuracy) + "% accurate).",
+  "A result is a warning to check, not proof. Never share an OTP, PIN or password. Report fraud at cybercrime.gov.in or call 1930.",
+]) $("about").append(el("li", { textContent: line }));
+
+$("msg").value = SAMPLES[0][1];
+run();
+</script>

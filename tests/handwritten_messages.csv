@@ -1,0 +1,25 @@
+text,label,note
+"Dear customer your SBI YONO account will be blocked today. Update PAN now at http://sbi-kyc-update.xyz or call 98xxxxxx34",1,kyc block
+"Congratulations! You won Rs 25,00,000 in KBC lottery. Pay Rs 5,000 processing fee to claim your prize.",1,lottery
+"Sir your electricity will be disconnected tonight 9:30pm as bill not updated. Call officer immediately: 98xxxxxx12",1,electricity
+"This is CBI. A parcel in your name has drugs. Stay on video call or you will be arrested. Pay Rs 80,000 to settle.",1,digital arrest
+"Work from home! Earn Rs 3,000 daily liking YouTube videos. Join our Telegram group, small registration fee Rs 500.",1,task job
+"Aapka Paytm KYC expire ho gaya hai. Link par click karke abhi verify karein warna account band ho jayega.",1,hinglish kyc
+"Mom this is my new number, I met with an accident need Rs 15,000 urgently please send on this UPI, will explain later",1,relative
+"Install AnyDesk and share the 9 digit code so our executive can refund your Rs 1,200 wrongly debited amount.",1,remote access
+"Buy ABC stock tomorrow, guaranteed 40% return. Join VIP group for Rs 2,999 only.",1,stock tip
+"Your PAN card is suspended. Share the OTP received to reactivate.",1,otp request
+"आपका बिजली कनेक्शन आज रात कटेगा। तुरंत इस नंबर पर कॉल करें और बिल अपडेट करें।",1,devanagari
+"You have received a payment request of Rs 4,999 from Refund Team. Enter your UPI PIN to receive money.",1,upi collect
+"Rs 2,000.00 debited from A/c XX1234 on 12-10-26 at AMAZON. Not you? Call 1930 or the bank number on your card.",0,bank debit alert
+"Your OTP for NetBanking login is 482913. Do not share with anyone. Valid for 5 minutes.",0,genuine otp
+"Your order #4821 has been shipped and will arrive by Friday. Track it in the app.",0,delivery
+"Reminder: your electricity bill of Rs 1,840 is due on 25 Oct. Pay through the official app or website.",0,bill reminder
+"Hi, your interview is scheduled for Monday 11am. Please bring your ID proof. No fee is required.",0,interview
+"Dear customer, your EMI of Rs 12,500 will be debited on the 5th. Please keep sufficient balance.",0,emi reminder
+"Your health insurance premium has been received. The policy document is attached to this email.",0,insurance
+"Thank you for visiting our branch today. Rate your experience in the official app.",0,branch feedback
+"Aapka electricity bill Rs 1,840 generate ho gaya hai. Last date 25 Oct. Official app se pay karein.",0,hinglish bill
+"Mom I reached the hostel safely, will call you after dinner.",0,family
+"Your Swiggy order is out for delivery. Share OTP 5521 only with the delivery partner on arrival.",0,delivery otp
+"Your salary of Rs 62,000 has been credited to account XX4521 on 30-Sep.",0,salary credit

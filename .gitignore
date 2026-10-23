@@ -1,0 +1,9 @@
+.venv/
+__pycache__/
+*.egg-info/
+.pytest_cache/
+models/
+dist/
+# Data stays out of the repository: add your own copy locally (see README, "Data").
+data/raksham_scam_dataset.csv
+data/external/uci_sms_spam.tsv

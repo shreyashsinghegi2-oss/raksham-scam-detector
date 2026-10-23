@@ -1,0 +1,26 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "raksham-scam-detector"
+version = "0.1.0"
+description = "Scam-message classifier for Indian SMS, WhatsApp, email and call transcripts, trained on the Raksham scam dataset."
+requires-python = ">=3.10"
+dependencies = ["pandas", "scikit-learn", "joblib"]
+
+[project.optional-dependencies]
+serve = ["fastapi", "uvicorn[standard]"]
+dev = ["pytest", "httpx", "fastapi", "uvicorn[standard]"]
+
+[project.scripts]
+raksham-train = "raksham.train:main"
+raksham-predict = "raksham.predict:main"
+raksham-eval = "raksham.evaluate:main"
+raksham-export = "raksham.export:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
