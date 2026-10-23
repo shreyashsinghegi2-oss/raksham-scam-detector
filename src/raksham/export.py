@@ -4,6 +4,7 @@ The deployed function does not use scikit-learn or pickle. It reads vocabularies
 coefficients from these files and scores text with NumPy only (deploy/api/_lite.py). That keeps the function small and
 removes the need to unpickle a file on a server.
 """
+import argparse
 import json
 
 import joblib
@@ -29,7 +30,10 @@ def space(prefix: str, pipeline, arrays: dict, vocabs: dict) -> dict:
 
 
 def main() -> None:
-    bundle = joblib.load(MODEL_PATH)
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--external", action="store_true", help="Export the model fitted with the external SMS data (raksham-train --external).")
+    suffix = "_external" if parser.parse_args().external else ""
+    bundle = joblib.load(MODEL_PATH.with_name(f"scam_detector{suffix}.joblib"))
     if bundle["detector_name"] != "logreg":
         raise SystemExit("Export supports the logistic-regression detector only.")
     arrays, vocabs = {}, {}
@@ -45,10 +49,10 @@ def main() -> None:
     arrays["type_coef"] = kinds.named_steps["clf"].coef_.astype(np.float64)
     arrays["type_intercept"] = kinds.named_steps["clf"].intercept_.astype(np.float64)
 
-    metrics = json.loads((REPORTS / "metrics.json").read_text(encoding="utf-8"))
+    metrics = json.loads((REPORTS / f"metrics{suffix}.json").read_text(encoding="utf-8"))
     cv = metrics["cross_validation"]
     meta = {
-        "detector": bundle["detector_name"], "trained_on": bundle["trained_on"], "thresholds": bundle["thresholds"],
+        "variant": "external" if suffix else "default", "detector": bundle["detector_name"], "trained_on": bundle["trained_on"], "thresholds": bundle["thresholds"],
         "det_intercept": float(det_clf.intercept_[0]), "det_space": det_spec, "type_space": type_spec,
         "type_classes": [str(c) for c in kinds.named_steps["clf"].classes_],
         "stop_words": sorted(ENGLISH_STOP_WORDS),

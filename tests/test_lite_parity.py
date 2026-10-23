@@ -20,7 +20,9 @@ pytestmark = pytest.mark.skipif(
 def models():
     from _lite import Lite
 
-    return load_bundle(), Lite(DEPLOY_MODEL)
+    lite = Lite(DEPLOY_MODEL)
+    variant = "_external" if lite.meta.get("variant") == "external" else ""  # the deployed variant decides which model to compare with
+    return load_bundle(data.MODEL_PATH.with_name(f"scam_detector{variant}.joblib")), lite
 
 
 def sample_texts():

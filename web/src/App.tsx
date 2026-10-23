@@ -24,7 +24,7 @@ const FALLBACK = { balanced: 0.71, strict: 0.93 };
 
 export default function App() {
   const [text, setText] = useState("");
-  const [strict, setStrict] = useState(false);
+  const [strict, setStrict] = useState(true);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [shown, setShown] = useState<{ text: string; result: Prediction } | null>(null);
@@ -99,7 +99,7 @@ export default function App() {
         <section aria-label="About this model" className="border-t border-white/[0.06] py-10">
           <h2 className="label mb-3">What to know</h2>
           <ul className="max-w-3xl list-disc space-y-1.5 pl-5 text-sm text-zinc-500">
-            <li>The model is trained on synthetic, template-written Indian scam and genuine messages. Its scores describe that data, not real-world accuracy.</li>
+            <li>The model is trained on synthetic, template-written Indian scam and genuine messages, plus 5,160 English SMS messages from the UCI SMS Spam Collection. Its scores describe that data, not real-world accuracy.</li>
             <li>It can wrongly flag genuine notices such as salary credits and premium receipts. The scam type is a weak hint.</li>
             <li>The risk bands are a reading aid built on the model's two flag lines. They are not calibrated probabilities.</li>
             <li>A result is a warning to check, not proof. Scammers change their wording.</li>

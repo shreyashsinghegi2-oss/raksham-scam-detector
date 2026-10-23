@@ -1,11 +1,12 @@
 {
+ "variant": "external",
  "detector": "logreg",
  "trained_on": "all templates",
  "thresholds": {
-  "balanced": 0.71,
-  "strict": 0.93
+  "balanced": 0.37,
+  "strict": 0.61
  },
- "det_intercept": 0.34900755417378815,
+ "det_intercept": -3.259829932835,
  "det_space": {
   "word": {
    "ngram": [
@@ -13,17 +14,17 @@
     2
    ],
    "offset": 0,
-   "size": 5173
+   "size": 16799
   },
   "char": {
    "ngram": [
     2,
     5
    ],
-   "offset": 5173,
-   "size": 16563
+   "offset": 16799,
+   "size": 37190
   },
-  "features": 21736
+  "features": 53989
  },
  "type_space": {
   "word": {
@@ -385,9 +386,9 @@
  ],
  "evaluation": {
   "method": "leave-templates-out cross-validation over all templates",
-  "scam_templates_caught": 0.9268,
-  "genuine_templates_left_alone": 0.8036,
-  "roc_auc": 0.9752,
+  "scam_templates_caught": 0.9634,
+  "genuine_templates_left_alone": 0.8393,
+  "roc_auc": 0.982,
   "scam_type_accuracy": 0.2669
  }
 }
