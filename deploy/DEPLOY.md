@@ -28,3 +28,7 @@ Notes:
 - To require a key on `/api/predict`, add an environment variable `RAKSHAM_API_KEY` in Project Settings, then redeploy. Callers send it as the `x-api-key` header. `/api/health` stays open.
 - Messages are scored in memory. The app does not store them and does not log request bodies.
 - To change the model, retrain in the full project (`raksham-train`, then `raksham-export`) and copy the new `deploy/model/` here.
+
+## Front end source
+
+The page in `deploy/public/` is a React + Tailwind build. Its source is in `web/`. After changing it, run `cd web && npm ci && npm run build`; the build writes into `deploy/public/`, which is committed so Vercel needs no build step. `npm run dev` proxies `/api` to a local API on port 8000.

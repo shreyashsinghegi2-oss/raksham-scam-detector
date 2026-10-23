@@ -55,9 +55,13 @@ def test_the_function_needs_only_fastapi_and_numpy():
 
 
 def test_page_is_self_contained_and_uses_the_api():
-    page = (data.ROOT / "deploy" / "public" / "index.html").read_text(encoding="utf-8")
-    assert "/api/predict" in page and "/api/health" in page
-    assert 'src="http' not in page and 'href="http' not in page  # nothing is loaded from another site
+    public = data.ROOT / "deploy" / "public"
+    page = (public / "index.html").read_text(encoding="utf-8")
+    code = "".join(f.read_text(encoding="utf-8") for f in (public / "assets").glob("*.js"))  # the React build
+    assert "/api/predict" in code and "/api/health" in code
+    styles = "".join(f.read_text(encoding="utf-8") for f in (public / "assets").glob("*.css"))
+    for text in (page, styles):
+        assert 'src="http' not in text and 'href="http' not in text and "fonts.googleapis" not in text  # nothing is loaded from another site
 
 
 def test_fancy_unicode_letters_are_read_as_plain_text():
