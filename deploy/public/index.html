@@ -9,17 +9,23 @@
 <style>
   :root {
     --bg:#ffffff; --fg:#000000; --muted:#555555; --line:#cfcfcf; --strong:#000000; --panel:#ffffff; --soft:#f2f2f2;
-    --on-strong:#ffffff; --s1:#e3e3e3; --s2:#a8a8a8; --s3:#5c5c5c; --s4:#000000;
+    --on-strong:#ffffff;
+    --c1:#2da44e; --c2:#f2c200; --c3:#f08a24; --c4:#d1242f;
+    --t1:#1a7f37; --t2:#8a6100; --t3:#b35900; --t4:#c01a24;
   }
   @media (prefers-color-scheme: dark) {
     :root:not([data-theme="light"]) {
       --bg:#000000; --fg:#ffffff; --muted:#a8a8a8; --line:#3a3a3a; --strong:#ffffff; --panel:#000000; --soft:#141414;
-      --on-strong:#000000; --s1:#2a2a2a; --s2:#5c5c5c; --s3:#a8a8a8; --s4:#ffffff; color-scheme:dark;
+      --on-strong:#000000;
+      --c1:#3fb950; --c2:#e3b341; --c3:#f0883e; --c4:#ff5c5c;
+      --t1:#3fb950; --t2:#e3b341; --t3:#f0883e; --t4:#ff6b6b; color-scheme:dark;
     }
   }
   :root[data-theme="dark"] {
     --bg:#000000; --fg:#ffffff; --muted:#a8a8a8; --line:#3a3a3a; --strong:#ffffff; --panel:#000000; --soft:#141414;
-    --on-strong:#000000; --s1:#2a2a2a; --s2:#5c5c5c; --s3:#a8a8a8; --s4:#ffffff; color-scheme:dark;
+    --on-strong:#000000;
+      --c1:#3fb950; --c2:#e3b341; --c3:#f0883e; --c4:#ff5c5c;
+      --t1:#3fb950; --t2:#e3b341; --t3:#f0883e; --t4:#ff6b6b; color-scheme:dark;
   }
   * { box-sizing:border-box; }
   html { -webkit-text-size-adjust:100%; }
@@ -62,6 +68,7 @@
   .verdict { background:var(--strong); color:var(--on-strong); padding:18px 20px; }
   .verdict.calm { background:transparent; color:var(--fg); border:1px solid var(--strong); }
   .verdict .band { font-size:12px; font-weight:700; letter-spacing:.18em; text-transform:uppercase; opacity:.85; }
+  .verdict .band::before { content:""; display:inline-block; width:11px; height:11px; margin-right:9px; background:var(--band-seg, currentColor); border:1px solid currentColor; vertical-align:-1px; }
   .verdict .line { font-size:24px; font-weight:800; letter-spacing:-.02em; margin-top:2px; }
   .meter { margin:24px auto 4px; max-width:340px; text-align:center; }
   .meter svg { display:block; width:100%; height:auto; overflow:visible; }
@@ -69,8 +76,8 @@
   .needle { stroke:var(--fg); stroke-width:4; stroke-linecap:round; transform-origin:150px 150px; transition:transform .9s cubic-bezier(.2,.8,.2,1); }
   .hub { fill:var(--fg); }
   .tick { fill:var(--muted); font-size:11px; font-family:inherit; }
-  .readout { margin-top:-6px; font-size:46px; font-weight:800; letter-spacing:-.04em; font-variant-numeric:tabular-nums; line-height:1; }
-  .readout small { display:block; font-size:12px; letter-spacing:.16em; text-transform:uppercase; color:var(--muted); font-weight:700; margin-top:8px; }
+  .readout { color:var(--band-text, var(--fg)); margin-top:-6px; font-size:46px; font-weight:800; letter-spacing:-.04em; font-variant-numeric:tabular-nums; line-height:1; }
+  .readout small { display:block; font-size:12px; letter-spacing:.16em; text-transform:uppercase; color:var(--band-text, var(--muted)); font-weight:700; margin-top:8px; }
   .legend { display:flex; flex-wrap:wrap; justify-content:center; gap:6px 16px; margin:16px 0 0; padding:0; list-style:none; font-size:12px; color:var(--muted); }
   .legend li { display:flex; align-items:center; gap:6px; }
   .legend i { width:12px; height:12px; display:inline-block; border:1px solid var(--strong); }
@@ -185,6 +192,7 @@ const SAMPLES = [
   ["Electricity scam (Hinglish)", "Sir aapka bijli connection aaj raat 9:30 baje kat jayega, bill update nahi hua. Turant is number par call karein: 98xxxxxx12"],
   ["Fake job fee (Hindi)", "आपका चयन हो गया है। नौकरी पक्की करने के लिए Rs 1,500 पंजीकरण शुल्क अभी जमा करें।"],
   ["Bank debit alert (genuine)", "Rs 2,000.00 debited from A/c XX1234 on 12-10-26 at AMAZON. Not you? Call 1930 or the bank number on your card."],
+  ["Insurance reminder (yellow)", "Dear customer, your LIC premium of Rs 4,200 for policy 12345678 is due on 28 Oct. Pay at licindia.in or through your agent."],
   ["Salary credited (known weak spot)", "Your salary of Rs 62,000 has been credited to account XX4521 on 30-Sep."],
 ];
 
@@ -210,10 +218,10 @@ function arc(from, to) {
 function bands() {
   const low = thresholds.balanced / 2;
   return [
-    { name: "Low", from: 0, to: low, color: "var(--s1)" },
-    { name: "Medium", from: low, to: thresholds.balanced, color: "var(--s2)" },
-    { name: "High", from: thresholds.balanced, to: thresholds.strict, color: "var(--s3)" },
-    { name: "Very high", from: thresholds.strict, to: 1, color: "var(--s4)" },
+    { name: "Low", from: 0, to: low, color: "var(--c1)", text: "var(--t1)" },
+    { name: "Medium", from: low, to: thresholds.balanced, color: "var(--c2)", text: "var(--t2)" },
+    { name: "High", from: thresholds.balanced, to: thresholds.strict, color: "var(--c3)", text: "var(--t3)" },
+    { name: "Very high", from: thresholds.strict, to: 1, color: "var(--c4)", text: "var(--t4)" },
   ];
 }
 function bandFor(p) { const b = bands(); return b.find((x) => p < x.to) || b[b.length - 1]; }
@@ -232,6 +240,7 @@ function buildMeter(p) {
   s.append(needle, svg("circle", { cx: 150, cy: 150, r: 9, class: "hub" }));
   wrap.append(s);
   const readout = el("div", { className: "readout" });
+  if (p !== null) readout.style.setProperty("--band-text", bandFor(p).text);
   readout.append(p === null ? "—" : pct(p) + "%", el("small", { textContent: p === null ? "No message yet" : bandFor(p).name + " risk" }));
   wrap.append(readout);
   const legend = el("ul", { className: "legend" });
@@ -297,6 +306,7 @@ function render(text, r) {
   const high = band.name === "High" || band.name === "Very high"; // strict mode can leave a high score unflagged
   const line = flagged ? "Looks like a scam" : high ? "Not flagged in strict mode, but the score is high" : band.name === "Medium" ? "Not flagged, but take care" : "Not flagged as a scam";
   const verdict = el("div", { className: "verdict" + (flagged || high ? "" : " calm") });
+  verdict.style.setProperty("--band-seg", band.color);
   verdict.append(el("div", { className: "band", textContent: band.name + " risk" }), el("div", { className: "line", textContent: line }));
   out.replaceChildren(verdict, buildMeter(p));
 
