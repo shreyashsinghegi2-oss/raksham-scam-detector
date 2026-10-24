@@ -36,10 +36,11 @@ def load_external(exclude_texts=frozenset()) -> pd.DataFrame:
     df["label"] = (df["name"] == "spam").astype(int)
     frames = [df[["text", "label"]]]
     for path in sorted(EXTERNAL_PATH.parent.glob("extra_*.csv")):  # your own data: columns text,label (1 = scam, 0 = genuine)
-        extra = pd.read_csv(path, encoding="utf-8-sig")
+        extra = pd.read_csv(path, encoding="utf-8-sig", keep_default_na=False)  # a message that is literally "NA" or "null" is text, not a missing value
         if not {"text", "label"} <= set(extra.columns) or not set(extra["label"].unique()) <= {0, 1}:
             raise ValueError(f"{path.name} needs columns text and label, with label 1 for scam and 0 for genuine")
         extra["text"] = extra["text"].astype(str).str.strip()
+        extra = extra[extra["text"] != ""]
         frames.append(extra[["text", "label"]])
     out = pd.concat(frames).drop_duplicates("text")
     out = out[~out["text"].isin(exclude_texts)]

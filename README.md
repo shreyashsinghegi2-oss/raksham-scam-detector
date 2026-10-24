@@ -115,3 +115,15 @@ I looked for more data to improve the model. Most Indian, Hindi, Hinglish and sm
 1. Add real, consented genuine and scam messages, especially payment confirmations and Hinglish (see "More data").
 2. Compare against a pretrained multilingual text encoder. It was not possible here because the sandbox could not reach a model hub.
 3. Add a sender-header and link-domain check as separate signals, since the text alone cannot see them.
+
+## Real Indian SMS added (24 Oct 2026)
+
+The synthetic Raksham data does not transfer to real messages. On 513 real Indian SMS held out from the India Spam SMS set (never trained on), the Raksham-only model ranked messages **worse than chance (AUC 0.39)**. Adding real data fixed this:
+
+| Model | AUC on the 513 held-out real SMS | Scams caught / false alarms (strict) |
+|---|---|---|
+| Raksham only | 0.39 | 18/187 / 76/326 |
+| + UCI SMS Spam Collection | 0.87 | 63/187 / 14/326 |
+| + India SMS + Indian-language scam reports (live) | 0.999 | 167/187 / 0/326 |
+
+Cautions: only 6% of the held-out messages have a close look-alike in the training part, and on the 357 with no look-alike the AUC is still 0.997, but both parts come from the same collection, so real-world accuracy will be lower. On the 56 hand-written messages the live model is slightly worse on genuine bank notices (7/28 false alarms balanced, 2/28 strict), because the genuine Indian messages it learned from are mostly chat, not bank alerts. Leave-templates-out cross-validation on the Raksham data moved from 96% scams caught / 84% genuine left alone to 87% / 88%. Sources and licences are in `data/external/README.md`; the data files are not committed.

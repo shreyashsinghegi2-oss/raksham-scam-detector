@@ -9,3 +9,5 @@ data/raksham_scam_dataset.csv
 data/external/uci_sms_spam.tsv
 web/node_modules/
 web/dist/
+data/external/extra_*.csv
+data/external/holdout_*.csv

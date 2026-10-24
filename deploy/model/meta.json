@@ -3,10 +3,10 @@
  "detector": "logreg",
  "trained_on": "all templates",
  "thresholds": {
-  "balanced": 0.37,
-  "strict": 0.61
+  "balanced": 0.6,
+  "strict": 0.9
  },
- "det_intercept": -3.259829932835,
+ "det_intercept": -3.332667336998683,
  "det_space": {
   "word": {
    "ngram": [
@@ -14,17 +14,17 @@
     2
    ],
    "offset": 0,
-   "size": 16799
+   "size": 24630
   },
   "char": {
    "ngram": [
     2,
     5
    ],
-   "offset": 16799,
-   "size": 37190
+   "offset": 24630,
+   "size": 48951
   },
-  "features": 53989
+  "features": 73581
  },
  "type_space": {
   "word": {
@@ -386,9 +386,9 @@
  ],
  "evaluation": {
   "method": "leave-templates-out cross-validation over all templates",
-  "scam_templates_caught": 0.9634,
-  "genuine_templates_left_alone": 0.8393,
-  "roc_auc": 0.982,
+  "scam_templates_caught": 0.8659,
+  "genuine_templates_left_alone": 0.875,
+  "roc_auc": 0.976,
   "scam_type_accuracy": 0.2669
  }
 }
