@@ -72,7 +72,7 @@ curl -X POST localhost:8000/predict -H "x-api-key: choose-a-long-secret" -H "con
 
 ## How good is it
 
-Every message in the dataset comes from one of 138 templates, about 50 near-copies each. Splitting messages at random would let the model memorise templates and report scores near 100%, so every figure here is measured on templates the model has not seen. Full tables are in `reports/metrics.md`.
+Every message in the dataset comes from one of 138 templates, about 50 near-copies each. Splitting messages at random would let the model memorise templates and report scores near 100%, so every figure here is measured on templates the model has not seen. Full tables are in `reports/metrics.md`; intended use, data, metrics and limits are summarised in `docs/MODEL_CARD.md`.
 
 Leave-templates-out cross-validation over all 138 templates (the most stable estimate):
 
