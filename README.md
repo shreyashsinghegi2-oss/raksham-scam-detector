@@ -1,5 +1,9 @@
 # Raksham Scam Detector
 
+[![CI](https://github.com/shreyashsinghegi2-oss/raksham-scam-detector/actions/workflows/ci.yml/badge.svg)](https://github.com/shreyashsinghegi2-oss/raksham-scam-detector/actions/workflows/ci.yml)
+![Python 3.10+](https://img.shields.io/badge/python-3.10%2B-blue)
+![Languages](https://img.shields.io/badge/languages-English%20%7C%20Hindi%20%7C%20Hinglish-orange)
+
 A text classifier that tells scam messages from genuine ones in Indian SMS, WhatsApp, email and call transcripts (English, Hindi and Hinglish). Trained on the Raksham scam dataset (8,022 messages, 17 scam types).
 
 It returns a verdict and a scam probability. For scams it also returns a likely scam type with its confidence, and the words that pushed the score up.
@@ -39,9 +43,7 @@ When the scam-type confidence is below 0.5, `scam_type` is `"uncertain"` and `sc
 
 **Vercel:** `deploy/` is a ready-to-deploy, NumPy-only app (no scikit-learn, 1.8 MB model). Run `raksham-export` after training to refresh `deploy/model/`, then follow `deploy/DEPLOY.md`.
 
-**Anywhere else:** the model is also served by a FastAPI app (`src/raksham/api.py`).
-
-The model is served by a small web API (`src/raksham/api.py`).
+**Anywhere else:** the model is also served by a FastAPI app (`src/raksham/api.py`), a small web API.
 
 ```bash
 .venv/bin/pip install -e ".[serve]"
@@ -127,3 +129,7 @@ The synthetic Raksham data does not transfer to real messages. On 513 real India
 | + India SMS + Indian-language scam reports (live) | 0.999 | 167/187 / 0/326 |
 
 Cautions: only 6% of the held-out messages have a close look-alike in the training part, and on the 357 with no look-alike the AUC is still 0.997, but both parts come from the same collection, so real-world accuracy will be lower. On the 56 hand-written messages the live model is slightly worse on genuine bank notices (7/28 false alarms balanced, 2/28 strict), because the genuine Indian messages it learned from are mostly chat, not bank alerts. Leave-templates-out cross-validation on the Raksham data moved from 96% scams caught / 84% genuine left alone to 87% / 88%. Sources and licences are in `data/external/README.md`; the data files are not committed.
+
+## Contributing, security, licence
+
+See `CONTRIBUTING.md` and `SECURITY.md`. Code is released under the MIT licence (`LICENSE`). The data files are not covered by it; see "Data" above.
