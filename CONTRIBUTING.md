@@ -9,7 +9,9 @@ python3 -m venv .venv && .venv/bin/pip install -e ".[dev]"
 .venv/bin/pytest
 ```
 
-Tests that need the training data skip themselves when it is missing, so the suite runs on a clean clone. CI runs the same command on Python 3.10 and 3.12, and builds the web app in `web/`.
+A `Makefile` wraps the common commands: `make install`, `make test`, `make lint`, `make train` and `make serve` (`make help` lists them). Code is checked with [ruff](https://docs.astral.sh/ruff/) (`make lint`); to run it before every commit, use `pip install pre-commit && pre-commit install`.
+
+Tests that need the training data skip themselves when it is missing, so the suite runs on a clean clone. CI runs lint and tests on Python 3.10 and 3.12, and builds the web app in `web/`.
 
 ## What helps most
 

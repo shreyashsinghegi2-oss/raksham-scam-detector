@@ -8,8 +8,14 @@ from sklearn.metrics import accuracy_score, f1_score
 from sklearn.model_selection import GroupKFold
 
 from . import data
-from .model import (binary_metrics, candidates, pick_balanced_threshold, pick_threshold,
-                    template_summary, type_model)
+from .model import (
+    binary_metrics,
+    candidates,
+    pick_balanced_threshold,
+    pick_threshold,
+    template_summary,
+    type_model,
+)
 
 STRICT_FPR = 0.01  # the strict threshold lets through at most 1% of genuine messages as false alarms
 EXTRA_WEIGHT = 0.25  # each external SMS counts a quarter of a Raksham message (see experiments/external_data.py)
@@ -58,7 +64,7 @@ def write_report(r: dict) -> str:
         "# Results", "",
         f"Detector: `{r['detector']}` (TF-IDF word and character n-grams with logistic regression)" + (f", fitted on the Raksham messages plus {r['extra_rows']} external messages at a quarter weight (never scored)" if r["extra_rows"] else ", fitted on the Raksham messages only") + ". "
         f"Verdict threshold {th['balanced']} (balanced); strict threshold {th['strict']} (at most {STRICT_FPR:.0%} false alarms on development data).", "",
-        "Every message in the dataset comes from one of {0} templates, about 50 near-copies each. All results below are therefore also given per template: "
+        "Every message in the dataset comes from one of {} templates, about 50 near-copies each. All results below are therefore also given per template: "
         "a template counts as caught or missed as a whole. Messages from one template never appear on both sides of any split.".format(r["templates_total"]), "",
         "## 1. Cross-validation over all templates (leave-templates-out, 6 folds)", "",
         "This is the most stable estimate: every template is scored by a model that never saw it.", "",

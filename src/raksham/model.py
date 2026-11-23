@@ -52,7 +52,9 @@ def binary_metrics(y_true, prob, threshold: float) -> dict:
     y_true = np.asarray(y_true)
     pred = (np.asarray(prob) >= threshold).astype(int)
     tn, fp, fn, tp = confusion_matrix(y_true, pred, labels=[0, 1]).ravel()
-    div = lambda a, b: round(float(a) / b, 4) if b else None
+    def div(a, b):
+        return round(float(a) / b, 4) if b else None
+
     precision, recall = div(tp, tp + fp), div(tp, tp + fn)
     f1 = round(2 * precision * recall / (precision + recall), 4) if precision and recall else None
     out = {
@@ -80,7 +82,9 @@ def template_summary(df, prob, threshold: float) -> dict:
     otherwise decide the result. A template is flagged when its average scam probability reaches the threshold."""
     t = df.assign(p=np.asarray(prob)).groupby("template_id").agg(label=("label", "first"), p=("p", "mean"))
     scam, genuine = t[t["label"] == 1], t[t["label"] == 0]
-    rate = lambda s: round(float(s.mean()), 4) if len(s) else None
+    def rate(s):
+        return round(float(s.mean()), 4) if len(s) else None
+
     return {
         "scam_templates": int(len(scam)), "genuine_templates": int(len(genuine)),
         "scam_template_recall": rate(scam["p"] >= threshold),

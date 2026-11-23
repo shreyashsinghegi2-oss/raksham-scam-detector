@@ -30,7 +30,7 @@ EDGE_INPUTS = {
     "hinglish": "Aapka KYC expire ho gaya hai, abhi link par click karke OTP share karein warna account block ho jayega",
     "mixed_script": "Your खाता will be blocked, साझा करें OTP अभी 立即 تأكيد now",
     "right_to_left": "تم حظر حسابك، أرسل رمز OTP الآن",
-    "zero_width_and_controls": "your​ OTP‍ is\u0000 required\u0007 now﻿",
+    "zero_width_and_controls": "your\u200b OTP‍ is\u0000 required\u0007 now﻿",
     "combining_marks": "é́́́ " * 50,
     "fullwidth_and_math_letters": "ｙｏｕｒ ａｃｃｏｕｎｔ ｉｓ ｂｌｏｃｋｅｄ 𝙨𝙝𝙖𝙧𝙚 𝙊𝙏𝙋",
     "astral_characters": "\U0001F600" * 500,
