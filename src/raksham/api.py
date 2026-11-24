@@ -6,7 +6,7 @@ Messages are scored in memory and are not stored or logged by this app. Set RAKS
 import hmac
 import os
 from functools import lru_cache
-from typing import Annotated
+from typing import Annotated, Any
 
 from fastapi import Depends, FastAPI, Header, HTTPException
 from pydantic import BaseModel, Field, StringConstraints
@@ -26,7 +26,7 @@ class PredictRequest(BaseModel):
 
 
 @lru_cache(maxsize=1)
-def bundle() -> dict:
+def bundle() -> dict[str, Any]:
     if not MODEL_PATH.exists():
         raise HTTPException(503, "The model is not trained yet. Run raksham-train.")
     return load_bundle()
@@ -42,13 +42,13 @@ app = FastAPI(title="Raksham Scam Detector", version="0.1.0")
 
 
 @app.get("/health")
-def health() -> dict:
+def health() -> dict[str, Any]:
     b = bundle()
     return {"status": "ok", "detector": b["detector_name"], "trained_on": b["trained_on"], "thresholds": b["thresholds"]}
 
 
 @app.post("/predict", dependencies=[Depends(require_key)])
-def predict_messages(request: PredictRequest) -> dict:
+def predict_messages(request: PredictRequest) -> dict[str, Any]:
     results = predict(request.messages, bundle(), strict=request.strict)
     for index, item in enumerate(results):
         item.pop("text")  # the caller already has the text; results are in request order

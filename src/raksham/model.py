@@ -1,4 +1,8 @@
+from collections.abc import Callable, Sequence
+from typing import Any
+
 import numpy as np
+import pandas as pd
 from sklearn.calibration import CalibratedClassifierCV
 from sklearn.feature_extraction.text import ENGLISH_STOP_WORDS, TfidfVectorizer
 from sklearn.linear_model import LogisticRegression
@@ -15,7 +19,7 @@ def features() -> FeatureUnion:
     ])
 
 
-def candidates() -> dict:
+def candidates() -> dict[str, Callable[[], Pipeline]]:
     return {
         "logreg": lambda: Pipeline([
             ("tfidf", features()),
@@ -47,12 +51,12 @@ def explain(pipeline: Pipeline, text: str, k: int = 3) -> list[str]:
     return [w for w, _ in sorted(words, key=lambda t: -t[1])[:k]]
 
 
-def binary_metrics(y_true, prob, threshold: float) -> dict:
+def binary_metrics(y_true: Sequence[int] | np.ndarray | pd.Series, prob: Sequence[float] | np.ndarray, threshold: float) -> dict[str, Any]:
     """Scam is the positive class. False positives (a genuine message flagged) are reported on their own."""
     y_true = np.asarray(y_true)
     pred = (np.asarray(prob) >= threshold).astype(int)
     tn, fp, fn, tp = confusion_matrix(y_true, pred, labels=[0, 1]).ravel()
-    def div(a, b):
+    def div(a: float, b: float) -> float | None:
         return round(float(a) / b, 4) if b else None
 
     precision, recall = div(tp, tp + fp), div(tp, tp + fn)
@@ -68,7 +72,7 @@ def binary_metrics(y_true, prob, threshold: float) -> dict:
     return out
 
 
-def pick_threshold(y_true, prob, max_fpr: float = 0.01) -> float:
+def pick_threshold(y_true: Sequence[int] | np.ndarray | pd.Series, prob: Sequence[float] | np.ndarray, max_fpr: float = 0.01) -> float:
     """The lowest threshold that keeps genuine messages wrongly flagged at or under max_fpr, so recall is as high as that allows."""
     for t in np.round(np.arange(0.05, 0.96, 0.01), 2):
         m = binary_metrics(y_true, prob, t)
@@ -77,12 +81,12 @@ def pick_threshold(y_true, prob, max_fpr: float = 0.01) -> float:
     return 0.5
 
 
-def template_summary(df, prob, threshold: float) -> dict:
+def template_summary(df: pd.DataFrame, prob: Sequence[float] | np.ndarray, threshold: float) -> dict[str, Any]:
     """Scores per message template, because every template yields about 50 near-copies: a large template would
     otherwise decide the result. A template is flagged when its average scam probability reaches the threshold."""
     t = df.assign(p=np.asarray(prob)).groupby("template_id").agg(label=("label", "first"), p=("p", "mean"))
     scam, genuine = t[t["label"] == 1], t[t["label"] == 0]
-    def rate(s):
+    def rate(s: pd.Series) -> float | None:
         return round(float(s.mean()), 4) if len(s) else None
 
     return {
@@ -92,7 +96,7 @@ def template_summary(df, prob, threshold: float) -> dict:
     }
 
 
-def pick_balanced_threshold(df, prob) -> float:
+def pick_balanced_threshold(df: pd.DataFrame, prob: Sequence[float] | np.ndarray) -> float:
     """The threshold that does best on both scam templates caught and genuine templates left alone; ties go to the one nearest 0.5."""
     scored = []
     for t in np.round(np.arange(0.05, 0.96, 0.01), 2):

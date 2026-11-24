@@ -1,4 +1,5 @@
 import csv
+from collections.abc import Collection
 from pathlib import Path
 
 import pandas as pd
@@ -25,7 +26,7 @@ def dev_and_test(df: pd.DataFrame) -> tuple[pd.DataFrame, pd.DataFrame]:
     return dev, test
 
 
-def load_external(exclude_texts=frozenset()) -> pd.DataFrame:
+def load_external(exclude_texts: Collection[str] = frozenset()) -> pd.DataFrame:
     """The UCI SMS Spam Collection, plus any data/external/extra_*.csv, as optional extra training data (label 1 = spam, 0 = ham), deduplicated and with any
     text already in the Raksham data removed. It is English SMS from the UK and Singapore, not Indian fraud:
     it only widens the range of genuine and promotional messages the model has seen. See data/external/README.md."""

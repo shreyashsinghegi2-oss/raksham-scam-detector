@@ -26,6 +26,8 @@ jobs:
         run: pip install -e ".[dev]"
       - name: Lint
         run: ruff check .
+      - name: Type check
+        run: mypy
       - name: Test
         # Dataset-dependent tests skip themselves when the data is absent.
         run: pytest -q

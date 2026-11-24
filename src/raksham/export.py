@@ -6,6 +6,7 @@ removes the need to unpickle a file on a server.
 """
 import argparse
 import json
+from typing import Any
 
 import joblib
 import numpy as np
@@ -16,10 +17,11 @@ from .data import MODEL_PATH, REPORTS, ROOT
 DEPLOY_MODEL = ROOT / "deploy" / "model"
 
 
-def space(prefix: str, pipeline, arrays: dict, vocabs: dict) -> dict:
+def space(prefix: str, pipeline: Any, arrays: dict[str, Any], vocabs: dict[str, Any]) -> dict[str, Any]:
     """One feature space: a word vectoriser followed by a character vectoriser, as in features()."""
     union = pipeline.named_steps["tfidf"]
-    spec, offset = {}, 0
+    spec: dict[str, Any] = {}
+    offset = 0
     for name, vec in union.transformer_list:
         arrays[f"{prefix}_{name}_idf"] = vec.idf_.astype(np.float64)
         vocabs[f"{prefix}_{name}"] = {term: int(i) for term, i in vec.vocabulary_.items()}
@@ -36,7 +38,8 @@ def main() -> None:
     bundle = joblib.load(MODEL_PATH.with_name(f"scam_detector{suffix}.joblib"))
     if bundle["detector_name"] != "logreg":
         raise SystemExit("Export supports the logistic-regression detector only.")
-    arrays, vocabs = {}, {}
+    arrays: dict[str, Any] = {}
+    vocabs: dict[str, Any] = {}
     detector = bundle["detector"]
     det_spec = space("det", detector, arrays, vocabs)
     kinds = bundle["type_model"]

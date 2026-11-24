@@ -1,11 +1,14 @@
 import argparse
 import json
+from collections.abc import Callable
+from typing import Any
 
 import joblib
 import numpy as np
 import pandas as pd
 from sklearn.metrics import accuracy_score, f1_score
 from sklearn.model_selection import GroupKFold
+from sklearn.pipeline import Pipeline
 
 from . import data
 from .model import (
@@ -21,7 +24,7 @@ STRICT_FPR = 0.01  # the strict threshold lets through at most 1% of genuine mes
 EXTRA_WEIGHT = 0.25  # each external SMS counts a quarter of a Raksham message (see experiments/external_data.py)
 
 
-def fit_detector(make, df, extra):
+def fit_detector(make: Callable[[], Pipeline], df: pd.DataFrame, extra: pd.DataFrame) -> Pipeline:
     """Fit on Raksham messages plus the down-weighted external data. External rows are only ever used for fitting, never scored."""
     X = pd.concat([df["text"], extra["text"]])
     y = np.r_[df["label"], extra["label"]]
@@ -31,7 +34,7 @@ def fit_detector(make, df, extra):
     return model
 
 
-def oof_probabilities(make, df, extra, folds: int) -> np.ndarray:
+def oof_probabilities(make: Callable[[], Pipeline], df: pd.DataFrame, extra: pd.DataFrame, folds: int) -> np.ndarray:
     """Out-of-fold scam probabilities. Folds are grouped by message template, so a template is never on both
     the fitting and the scoring side: this measures how the model copes with templates it has not seen."""
     prob = np.zeros(len(df))
@@ -41,7 +44,7 @@ def oof_probabilities(make, df, extra, folds: int) -> np.ndarray:
     return prob
 
 
-def oof_scam_types(scam, folds: int) -> np.ndarray:
+def oof_scam_types(scam: pd.DataFrame, folds: int) -> np.ndarray:
     pred = np.empty(len(scam), dtype=object)
     for fit_idx, score_idx in GroupKFold(n_splits=folds).split(scam, scam["scam_type"], scam["template_id"]):
         model = type_model().fit(scam.iloc[fit_idx]["text"], scam.iloc[fit_idx]["scam_type"])
@@ -49,15 +52,15 @@ def oof_scam_types(scam, folds: int) -> np.ndarray:
     return pred
 
 
-def scored(df, prob, threshold) -> dict:
+def scored(df: pd.DataFrame, prob: np.ndarray, threshold: float) -> dict[str, Any]:
     return {"messages": binary_metrics(df["label"], prob, threshold), "templates": template_summary(df, prob, threshold)}
 
 
-def by_slice(df, prob, threshold, column) -> dict:
+def by_slice(df: pd.DataFrame, prob: np.ndarray, threshold: float, column: str) -> dict[str, Any]:
     return {str(v): scored(g, prob[g.index], threshold) for v, g in df.groupby(column)}
 
 
-def write_report(r: dict) -> str:
+def write_report(r: dict[str, Any]) -> str:
     th = r["thresholds"]
     cv, ho = r["cross_validation"], r["held_out"]
     lines = [
@@ -111,7 +114,8 @@ def main() -> None:
     print(f"{len(df)} messages, {df['template_id'].nunique()} templates; development {len(dev)}, test {len(test)}, no shared templates; {len(extra)} external messages used for fitting only")
 
     # 1. Choose the model and thresholds on development data only.
-    selection, oof = {}, {}
+    selection: dict[str, dict[str, Any]] = {}
+    oof: dict[str, np.ndarray] = {}
     for name, make in candidates().items():
         oof[name] = oof_probabilities(make, dev, extra, folds=5)
         selection[name] = binary_metrics(dev["label"], oof[name], 0.5)
@@ -136,7 +140,7 @@ def main() -> None:
     prob_all = oof_probabilities(candidates()[best], df, extra, folds=6)
     scam_all = df[df["label"] == 1].reset_index(drop=True)
     types_all = oof_scam_types(scam_all, folds=6)
-    cv = {
+    cv: dict[str, Any] = {
         "overall": scored(df, prob_all, thresholds["balanced"]),
         "by_language": by_slice(df, prob_all, thresholds["balanced"], "language"),
         "scam_type": {
@@ -146,7 +150,7 @@ def main() -> None:
         },
     }
 
-    result = {
+    result: dict[str, Any] = {
         "detector": best, "thresholds": thresholds, "dev_rows": int(len(dev)), "extra_rows": int(len(extra)), "templates_total": int(df["template_id"].nunique()),
         "selection": selection,
         "held_out": {k: scored(test, prob, t) for k, t in thresholds.items()},

@@ -1,4 +1,4 @@
-.PHONY: help install train test lint format serve clean
+.PHONY: help install train test lint typecheck format serve clean
 
 PYTHON ?= python3
 VENV   ?= .venv
@@ -19,6 +19,9 @@ test:  ## Run the test suite (dataset tests skip themselves when the data is abs
 
 lint:  ## Check style with ruff
 	$(BIN)/ruff check .
+
+typecheck:  ## Check types with mypy
+	$(BIN)/mypy
 
 format:  ## Apply ruff's safe auto-fixes
 	$(BIN)/ruff check --fix .

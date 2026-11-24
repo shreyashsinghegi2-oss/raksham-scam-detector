@@ -11,7 +11,7 @@ dependencies = ["pandas", "scikit-learn", "joblib"]
 
 [project.optional-dependencies]
 serve = ["fastapi", "uvicorn[standard]"]
-dev = ["pytest", "httpx", "fastapi", "uvicorn[standard]", "ruff"]
+dev = ["pytest", "httpx", "fastapi", "uvicorn[standard]", "ruff", "mypy", "pandas-stubs"]
 
 [project.scripts]
 raksham-train = "raksham.train:main"
@@ -44,3 +44,16 @@ ignore = ["E501", "B905"]
 
 [tool.ruff.lint.isort]
 known-first-party = ["raksham"]
+
+[tool.mypy]
+python_version = "3.10"
+files = ["src"]
+check_untyped_defs = true
+warn_unused_ignores = true
+warn_redundant_casts = true
+no_implicit_optional = true
+
+[[tool.mypy.overrides]]
+# scikit-learn and joblib ship no type stubs.
+module = ["sklearn.*", "joblib"]
+ignore_missing_imports = true

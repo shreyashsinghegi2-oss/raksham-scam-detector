@@ -2,6 +2,8 @@ import argparse
 import json
 import sys
 import unicodedata
+from pathlib import Path
+from typing import Any
 
 import joblib
 
@@ -11,21 +13,21 @@ from .model import explain
 TYPE_MIN_CONFIDENCE = 0.5
 
 
-def load_bundle(path=MODEL_PATH) -> dict:
+def load_bundle(path: Path = MODEL_PATH) -> dict[str, Any]:
     return joblib.load(path)
 
 
-def predict(texts: list[str], bundle: dict | None = None, strict: bool = False) -> list[dict]:
+def predict(texts: list[str], bundle: dict[str, Any] | None = None, strict: bool = False) -> list[dict[str, Any]]:
     """Verdict, scam probability and, for scams, the likely scam type with its confidence and the words that drove the score.
     The strict threshold raises the bar for calling a message a scam, which cuts false alarms and misses more scams."""
     bundle = bundle or load_bundle()
     texts = [unicodedata.normalize("NFKC", t) for t in texts]  # fancy-font letters become plain ones
     threshold = bundle["thresholds"]["strict" if strict else "balanced"]
     probs = bundle["detector"].predict_proba(texts)[:, 1]
-    results = []
+    results: list[dict[str, Any]] = []
     for text, p in zip(texts, probs):
         is_scam = p >= threshold
-        item = {"text": text, "verdict": "scam" if is_scam else "genuine", "scam_probability": round(float(p), 3)}
+        item: dict[str, Any] = {"text": text, "verdict": "scam" if is_scam else "genuine", "scam_probability": round(float(p), 3)}
         if is_scam:
             kinds = bundle["type_model"].predict_proba([text])[0]
             top = int(kinds.argmax())
