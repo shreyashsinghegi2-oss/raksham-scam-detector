@@ -70,6 +70,31 @@ curl -X POST localhost:8000/predict -H "x-api-key: choose-a-long-secret" -H "con
 - Input: message text only. The dataset's sender, link and phone columns are not used, because a message you check will not come with them.
 - Two thresholds: **balanced** (0.71) is the default; **strict** (0.93) keeps false alarms on development data at or under 1%.
 
+### Architecture
+
+```mermaid
+flowchart LR
+    subgraph train["Training (local, needs the dataset)"]
+        D[("data/raksham_scam_dataset.csv<br/>not committed")] --> T["raksham-train<br/>TF-IDF + logistic regression"]
+        T --> M["models/scam_detector.joblib"]
+        T --> R["reports/ metrics"]
+        M --> E["raksham-export"]
+        E --> DM["deploy/model/<br/>vocab.json, weights.npz, meta.json"]
+    end
+
+    subgraph serve["Serving"]
+        M --> API["FastAPI service<br/>src/raksham/api.py<br/>POST /predict, GET /health"]
+        DM --> LITE["Vercel function<br/>deploy/api, NumPy only"]
+        LITE --> WEB["React page<br/>web/ built to deploy/public"]
+    end
+
+    CLI["raksham-predict CLI"] --> M
+    USER(["message text"]) --> API
+    USER --> WEB
+```
+
+The scikit-learn model is used by the CLI and the Docker/FastAPI service. The Vercel deployment reads the exported plain files and scores with NumPy only, so it needs neither scikit-learn nor pickle.
+
 ## How good is it
 
 Every message in the dataset comes from one of 138 templates, about 50 near-copies each. Splitting messages at random would let the model memorise templates and report scores near 100%, so every figure here is measured on templates the model has not seen. Full tables are in `reports/metrics.md`; intended use, data, metrics and limits are summarised in `docs/MODEL_CARD.md`.
