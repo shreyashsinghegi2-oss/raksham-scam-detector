@@ -1,0 +1,38 @@
+name: Misclassified message
+description: A scam scored as genuine, or a genuine message flagged as a scam
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Only share a message you wrote yourself or have clear permission to share, and remove personal details first
+        (names, phone numbers, account numbers, OTPs, links that identify you). See CONTRIBUTING.md.
+  - type: textarea
+    id: message
+    attributes:
+      label: Message text (anonymised)
+    validations:
+      required: true
+  - type: dropdown
+    id: expected
+    attributes:
+      label: What it really is
+      options:
+        - Scam (missed by the detector)
+        - Genuine (wrongly flagged as a scam)
+    validations:
+      required: true
+  - type: input
+    id: score
+    attributes:
+      label: Score and verdict you got
+      placeholder: "scam_probability 0.38, verdict genuine"
+  - type: dropdown
+    id: language
+    attributes:
+      label: Language
+      options:
+        - English
+        - Hindi
+        - Hinglish
+        - Other or mixed
