@@ -27,4 +27,4 @@ Tests that need the training data skip themselves when it is missing, so the sui
 
 ## Pull requests
 
-Keep them small and focused. State what changed, how you measured it, and what got worse, if anything.
+Keep them small and focused. State what changed, how you measured it, and what got worse, if anything. Add a line under "Unreleased" in `CHANGELOG.md` for any change a user or contributor would notice.
